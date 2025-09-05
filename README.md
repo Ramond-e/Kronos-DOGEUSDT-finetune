@@ -4,7 +4,7 @@
 
 <div align="center">
 
-<a href="https://huggingface.co/NeoQuasar"> 
+<a href="https://huggingface.co/Ramond-e/models"> 
 <img src="https://img.shields.io/badge/🤗-Hugging_Face-yellow" alt="Hugging Face"> 
 </a> 
 <a href="https://github.com/shiyu-coder/Kronos"> 
@@ -54,6 +54,8 @@ kronos/
 │   ├── doge_train.py          # 两阶段训练脚本
 │   ├── check_data_distribution.py     # 数据质量分析
 │   ├── visualize_training_progress.py # 可视化工具
+│   ├── prediction_eval/       # Kronos风格预测评估
+│   │   └── kronos_prediction_eval.py  # 预测评估脚本
 │   ├── DOGE_PROGRESS.md       # 项目进度记录
 │   ├── doge_data/             # 数据目录
 │   │   ├── raw/               # 原始DOGE数据
@@ -125,6 +127,10 @@ python doge_train.py
 ```bash
 # 生成训练进度可视化
 python visualize_training_progress.py
+
+# 运行Kronos风格预测评估
+cd prediction_eval
+python kronos_prediction_eval.py
 ```
 
 ## 📥 预训练模型下载
@@ -174,12 +180,51 @@ finetune/doge_outputs/
 
 > **注**: 图表文件位于 `finetune/doge_outputs/predictor_training_progress.png`
 
-### 关键优化点
+## 🎯 模型预测评估
+
+### 📈 Kronos风格预测验证
+
+基于原Kronos项目的预测方式，我们对微调后的模型进行了全面评估：
+
+- **评估方式**: 600小时数据，前80% (480小时) 作为历史，预测后20% (120小时)
+- **模型来源**: 直接从Hugging Face加载微调后的模型
+- **评估脚本**: `finetune/prediction_eval/kronos_prediction_eval.py`
+
+### 🔍 关键发现：市场时期敏感性
+
+通过对不同月份的评估，我们发现了一个重要现象：**微调模型对不同市场时期的表现存在显著差异**
+
+| 时间段 | 数据期间 | Close相关系数 | 方向准确率 | MAPE | 评价 |
+|--------|----------|---------------|------------|------|------|
+| **5月期间** | 2025-05-01 到 05-26 | **0.7683** ⭐ | 48.74% | 10.75% | 🏆 模型表现良好 |
+| **4月期间** | 2025-03-20 到 04-14 | 0.4916 | 49.58% | **4.98%** ⭐ | ✅ 模型表现良好 |
+| **6月期间** | 2025-06-03 到 06-28 | -0.4475 | 52.10% | 6.39% | ⚠️ 有待改进 |
+| **7月期间** | 2025-07-03 到 07-28 | 0.0956 | 48.74% | 13.74% | ⚠️ 有待改进 |
+| **最新期间** | 2025-08-09 到 09-03 | -0.3085 | 42.86% | 8.29% | ⚠️ 有待改进 |
+
+**核心洞察**：
+- 🎯 **最佳表现**：5月期间相关系数达到0.7683，展现优秀的趋势预测能力
+- 📉 **时间敏感性**：越接近当前时间，模型表现越差，反映了市场环境的变化
+- 🔄 **数值vs趋势**：4月期间数值误差最低，但5月期间趋势预测最佳
+- 💡 **实用意义**：说明金融模型需要持续更新以适应市场变化
+
+### 📊 预测结果可视化
+
+以下是5月的预测结果图：
+
+<p align="center">
+    <img src="finetune/prediction_eval/doge_prediction_results.png" alt="DOGE预测结果对比" width="800px" />
+</p>
+
+> **图表说明**: 蓝色实线为真实价格和交易量，红色虚线为模型预测。黑色竖直虚线标示预测开始位置。上图显示Close价格预测，下图显示Volume交易量预测。可以看出模型在价格趋势预测方面表现较为优异（相关系数0.7683）。
+
+### 🔧 关键优化点
 
 - 📉 **学习率调优**: Tokenizer=5e-6, Predictor=2e-6
 - 🔧 **梯度裁剪**: 阈值设为3.0防止梯度爆炸
 - 📊 **数据标准化**: 使用MAD方法处理异常值
 - ⏹️ **早停机制**: 在第4轮检测到过拟合并停止
+- 🎯 **评估优化**: 多时间段测试发现最佳表现期
 
 ## ⚙️ 配置说明
 
