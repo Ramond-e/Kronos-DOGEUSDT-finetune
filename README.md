@@ -1,304 +1,215 @@
 <div align="center">
-  <h2><b>Kronos: A Foundation Model for the Language of Financial Markets </b></h2>
+  <h2><b>Kronos DOGE/USDT Fine-tuning Project</b></h2>
 </div>
-
 
 <div align="center">
 
-</a> 
 <a href="https://huggingface.co/NeoQuasar"> 
 <img src="https://img.shields.io/badge/🤗-Hugging_Face-yellow" alt="Hugging Face"> 
 </a> 
-<a href="https://shiyu-coder.github.io/Kronos-demo/"> <img src="https://img.shields.io/badge/🚀-Live_Demo-brightgreen" alt="Live Demo"> </a>
-<a href="https://github.com/shiyu-coder/Kronos/graphs/commit-activity"> 
-<img src="https://img.shields.io/github/last-commit/shiyu-coder/Kronos?color=blue" alt="Last Commit"> 
+<a href="https://github.com/shiyu-coder/Kronos"> 
+<img src="https://img.shields.io/badge/📚-Original_Kronos-blue" alt="Original Kronos"> 
 </a> 
-<a href="https://github.com/shiyu-coder/Kronos/stargazers"> 
-<img src="https://img.shields.io/github/stars/shiyu-coder/Kronos?color=lightblue" alt="GitHub Stars"> 
-</a> 
-<a href="https://github.com/shiyu-coder/Kronos/network/members"> 
-<img src="https://img.shields.io/github/forks/shiyu-coder/Kronos?color=yellow" alt="GitHub Forks"> 
-</a> 
-<a href="./LICENSE"> 
-<img src="https://img.shields.io/github/license/shiyu-coder/Kronos?color=green" alt="License"> 
+<a href="https://github.com/shiyu-coder/Kronos/blob/main/LICENSE"> 
+<img src="https://img.shields.io/badge/License-MIT-green" alt="License"> 
 </a>
 
 </div>
 
-<p align="center">
-
+<!-- Logo placeholder - add logo if available -->
+<!-- <p align="center">
 <img src="./figures/logo.png" width="100">
+</p> -->
 
-</p>
+> 基于 **Kronos 金融基础模型**的 DOGE/USDT 加密货币微调实现  
+> 包含完整的数据处理、两阶段训练和可视化分析工具
 
-> Kronos is the **first open-source foundation model** for financial candlesticks (K-lines), 
-> trained on data from over **45 global exchanges**.
+## 🎯 项目简介
 
+本项目是基于 [Kronos](https://github.com/shiyu-coder/Kronos) 金融基础模型的 **DOGE/USDT** 加密货币微调实现。Kronos 是首个专为金融蜡烛图(K线)数据设计的开源基础模型，训练于全球45+交易所数据。
 
-</div>
+我们在此基础上开发了针对 DOGE/USDT 交易对的完整微调方案，包括：
+- 🔄 **完整数据流水线** - 从原始CSV到训练就绪的数据
+- 🧠 **两阶段微调** - 分别优化 Tokenizer 和 Predictor
+- 📊 **实时监控** - 训练过程可视化和损失追踪
+- 🛡️ **鲁棒性优化** - 异常值处理和梯度裁剪
 
-## 📰 News
-*   🚩 **[2025.08.17]** We have released the scripts for fine-tuning! Check them out to adapt Kronos to your own tasks.
-*   🚩 **[2025.08.02]** Our paper is now available on [arXiv](https://arxiv.org/abs/2508.02739)!
+## 🚀 主要特性
 
-<p align="center">
+- ✅ **自定义数据处理** - 支持1小时K线数据，MAD标准化处理
+- ✅ **滑动窗口训练** - 400步历史 + 120步预测窗口
+- ✅ **智能模型管理** - 基于验证损失的最佳模型自动保存
+- ✅ **过拟合检测** - 训练过程中的早停机制
+- ✅ **训练可视化** - 损失曲线和训练进度图表
+- ✅ **中断恢复** - 支持训练中断后的手动恢复
 
-## 📜 Introduction
+## 📁 项目结构
 
-**Kronos** is a family of decoder-only foundation models, pre-trained specifically for the "language" of financial markets—K-line sequences. Unlike general-purpose TSFMs, Kronos is designed to handle the unique, high-noise characteristics of financial data. It leverages a novel two-stage framework: 
-1. A specialized tokenizer first quantizes continuous, multi-dimensional K-line data (OHLCV) into **hierarchical discrete tokens**. 
-2. A large, autoregressive Transformer is then pre-trained on these tokens, enabling it to serve as a unified model for diverse quantitative tasks.
+```
+kronos/
+├── finetune/                   # DOGE微调核心目录
+│   ├── doge_config.py         # 配置参数
+│   ├── doge_preprocess.py     # 数据预处理
+│   ├── doge_dataset.py        # PyTorch数据集
+│   ├── doge_train.py          # 两阶段训练脚本
+│   ├── check_data_distribution.py     # 数据质量分析
+│   ├── visualize_training_progress.py # 可视化工具
+│   ├── DOGE_PROGRESS.md       # 项目进度记录
+│   ├── doge_data/             # 数据目录
+│   │   ├── raw/               # 原始DOGE数据
+│   │   ├── processed/         # 处理后数据
+│   │   └── splits/            # 训练/验证/测试集
+│   ├── doge_outputs/          # 训练输出
+│   │   ├── tokenizer/         # Tokenizer模型
+│   │   ├── predictor/         # Predictor模型
+│   │   └── logs/              # 训练日志
+│   └── utils/                 # 工具函数
+├── get_DOGEUSDT_data/         # 数据获取脚本
+│   ├── getData.py             # Binance数据获取
+│   └── dogeusdt_1h_all_klines.csv    # 历史数据
+├── model/                     # Kronos模型定义
+│   ├── kronos.py              # 主模型文件
+│   └── module.py              # 模型组件
+├── README.md                  # 项目说明
+└── requirements.txt           # 依赖列表
+```
 
-<p align="center">
-    <img src="figures/overview.png" alt="" align="center" width="700px" />
-</p>
+## 🛠️ 快速开始
 
-## ✨ Live Demo 
-We have set up a live demo to visualize Kronos's forecasting results. The webpage showcases a forecast for the **BTC/USDT** trading pair over the next 24 hours. 
+### 1. 环境安装
 
-**👉 [Access the Live Demo Here](https://shiyu-coder.github.io/Kronos-demo/)** 
+```bash
+# 克隆仓库
+git clone https://github.com/Ramond-e/Kronos-DOGEUSDT-finetune
+cd kronos
 
-## 📦 Model Zoo 
-We release a family of pre-trained models with varying capacities to suit different computational and application needs. All models are readily accessible from the Hugging Face Hub.
-
-| Model        | Tokenizer                                                                       | Context length | Param  | Open-source                                                               |
-|--------------|---------------------------------------------------------------------------------| -------------- | ------ |---------------------------------------------------------------------------|
-| Kronos-mini  | [Kronos-Tokenizer-2k](https://huggingface.co/NeoQuasar/Kronos-Tokenizer-2k)     | 2048           | 4.1M   | ✅ [NeoQuasar/Kronos-mini](https://huggingface.co/NeoQuasar/Kronos-mini)  |
-| Kronos-small | [Kronos-Tokenizer-base](https://huggingface.co/NeoQuasar/Kronos-Tokenizer-base) | 512            | 24.7M  | ✅ [NeoQuasar/Kronos-small](https://huggingface.co/NeoQuasar/Kronos-small) |
-| Kronos-base  | [Kronos-Tokenizer-base](https://huggingface.co/NeoQuasar/Kronos-Tokenizer-base) | 512            | 102.3M | ✅ [NeoQuasar/Kronos-base](https://huggingface.co/NeoQuasar/Kronos-base)   |
-| Kronos-large | [Kronos-Tokenizer-base](https://huggingface.co/NeoQuasar/Kronos-Tokenizer-base) | 512            | 499.2M | ❌                                                                         |
-
-
-## 🚀 Getting Started
-
-### Installation
-
-1. Install Python 3.10+, and then install the dependencies:
-
-```shell
+# 安装依赖
 pip install -r requirements.txt
 ```
 
-### 📈 Making Forecasts
+### 2. 获取DOGE/USDT数据
 
-Forecasting with Kronos is straightforward using the `KronosPredictor` class. It handles data preprocessing, normalization, prediction, and inverse normalization, allowing you to get from raw data to forecasts in just a few lines of code.
-
-**Important Note**: The `max_context` for `Kronos-small` and `Kronos-base` is **512**. This is the maximum sequence length the model can process. For optimal performance, it is recommended that your input data length (i.e., `lookback`) does not exceed this limit. The `KronosPredictor` will automatically handle truncation for longer contexts.
-
-Here is a step-by-step guide to making your first forecast.
-
-#### 1. Load the Tokenizer and Model
-
-First, load a pre-trained Kronos model and its corresponding tokenizer from the Hugging Face Hub.
-
-```python
-from model import Kronos, KronosTokenizer, KronosPredictor
-
-# Load from Hugging Face Hub
-tokenizer = KronosTokenizer.from_pretrained("NeoQuasar/Kronos-Tokenizer-base")
-model = Kronos.from_pretrained("NeoQuasar/Kronos-small")
+```bash
+# 使用Binance API获取数据
+cd get_DOGEUSDT_data
+python getData.py
 ```
 
-#### 2. Instantiate the Predictor
+### 3. 数据预处理
 
-Create an instance of `KronosPredictor`, passing the model, tokenizer, and desired device.
-
-```python
-# Initialize the predictor
-predictor = KronosPredictor(model, tokenizer, device="cuda:0", max_context=512)
+```bash
+cd finetune
+python doge_preprocess.py
 ```
 
-#### 3. Prepare Input Data
+数据处理包括：
+- 时间特征生成 (小时、星期、月份等)
+- 滑动窗口创建 (400历史 + 120预测)
+- 鲁棒标准化 (中位数/MAD方法)
+- 数据集分割 (70%/15%/15%)
 
-The `predict` method requires three main inputs:
--   `df`: A pandas DataFrame containing the historical K-line data. It must include columns `['open', 'high', 'low', 'close']`. `volume` and `amount` are optional.
--   `x_timestamp`: A pandas Series of timestamps corresponding to the historical data in `df`.
--   `y_timestamp`: A pandas Series of timestamps for the future periods you want to predict.
+### 4. 开始训练
 
-```python
-import pandas as pd
-
-# Load your data
-df = pd.read_csv("./data/XSHG_5min_600977.csv")
-df['timestamps'] = pd.to_datetime(df['timestamps'])
-
-# Define context window and prediction length
-lookback = 400
-pred_len = 120
-
-# Prepare inputs for the predictor
-x_df = df.loc[:lookback-1, ['open', 'high', 'low', 'close', 'volume', 'amount']]
-x_timestamp = df.loc[:lookback-1, 'timestamps']
-y_timestamp = df.loc[lookback:lookback+pred_len-1, 'timestamps']
+```bash
+# 启动两阶段微调
+python doge_train.py
 ```
 
-#### 4. Generate Forecasts
+训练流程：
+1. **阶段1**: Tokenizer微调 (5轮)
+2. **阶段2**: Predictor微调 (15轮)
+3. **自动保存**: 基于验证损失的最佳模型
 
-Call the `predict` method to generate forecasts. You can control the sampling process with parameters like `T`, `top_p`, and `sample_count` for probabilistic forecasting.
+### 5. 训练监控
 
-```python
-# Generate predictions
-pred_df = predictor.predict(
-    df=x_df,
-    x_timestamp=x_timestamp,
-    y_timestamp=y_timestamp,
-    pred_len=pred_len,
-    T=1.0,          # Temperature for sampling
-    top_p=0.9,      # Nucleus sampling probability
-    sample_count=1  # Number of forecast paths to generate and average
-)
-
-print("Forecasted Data Head:")
-print(pred_df.head())
+```bash
+# 生成训练进度可视化
+python visualize_training_progress.py
 ```
 
-The `predict` method returns a pandas DataFrame containing the forecasted values for `open`, `high`, `low`, `close`, `volume`, and `amount`, indexed by the `y_timestamp` you provided.
+## 📥 预训练模型下载
 
-For efficient processing of multiple time series, Kronos provides a `predict_batch` method that enables parallel prediction on multiple datasets simultaneously. This is particularly useful when you need to forecast multiple assets or time periods at once.
+由于模型文件较大（~109MB），我们将其托管在 Hugging Face Hub 上：
+
+### 🤗 方式1: 直接加载使用 (推荐)
 
 ```python
-# Prepare multiple datasets for batch prediction
-df_list = [df1, df2, df3]  # List of DataFrames
-x_timestamp_list = [x_ts1, x_ts2, x_ts3]  # List of historical timestamps
-y_timestamp_list = [y_ts1, y_ts2, y_ts3]  # List of future timestamps
+from model import KronosTokenizer, Kronos
 
-# Generate batch predictions
-pred_df_list = predictor.predict_batch(
-    df_list=df_list,
-    x_timestamp_list=x_timestamp_list,
-    y_timestamp_list=y_timestamp_list,
-    pred_len=pred_len,
-    T=1.0,
-    top_p=0.9,
-    sample_count=1,
-    verbose=True
-)
+# 直接从 Hugging Face 加载微调后的模型
+tokenizer = KronosTokenizer.from_pretrained("Ramond-e/doge-kronos-tokenizer")
+model = Kronos.from_pretrained("Ramond-e/doge-kronos-predictor")
 
-# pred_df_list contains prediction results in the same order as input
-for i, pred_df in enumerate(pred_df_list):
-    print(f"Predictions for series {i}:")
-    print(pred_df.head())
+# 使用微调后的模型进行预测
+from model import KronosPredictor
+predictor = KronosPredictor(model, tokenizer, device="cuda:0")
 ```
 
-**Important Requirements for Batch Prediction:**
-- All series must have the same historical length (lookback window)
-- All series must have the same prediction length (`pred_len`)
-- Each DataFrame must contain the required columns: `['open', 'high', 'low', 'close']`
-- `volume` and `amount` columns are optional and will be filled with zeros if missing
+### 📄 方式2: 手动下载
 
-The `predict_batch` method leverages GPU parallelism for efficient processing and automatically handles normalization and denormalization for each series independently.
+- **DOGE Tokenizer (15MB)**: [Ramond-e/doge-kronos-tokenizer](https://huggingface.co/Ramond-e/doge-kronos-tokenizer)
+- **DOGE Predictor (94MB)**: [Ramond-e/doge-kronos-predictor](https://huggingface.co/Ramond-e/doge-kronos-predictor)
 
-#### 5. Example and Visualization
+下载后放置在以下位置：
+```
+finetune/doge_outputs/
+├── tokenizer/
+│   └── best_tokenizer_epoch_5.pt
+└── predictor/
+    └── best_predictor_epoch_4.pt
+```
 
-For a complete, runnable script that includes data loading, prediction, and plotting, please see [`examples/prediction_example.py`](examples/prediction_example.py).
+## 📊 训练成果
 
-Running this script will generate a plot comparing the ground truth data against the model's forecast, similar to the one shown below:
+我们的DOGE/USDT微调取得了以下成果：
+
+| 模型 | 最佳轮次 | 验证损失 | 训练时间 |
+|------|----------|----------|----------|
+| **Tokenizer** | Epoch 5 | 0.047491 | ~30分钟/轮 |
+| **Predictor** | Epoch 4 | 1.971007 | ~5小时/轮 |
 
 <p align="center">
-    <img src="figures/prediction_example.png" alt="Forecast Example" align="center" width="600px" />
+    <img src="finetune/doge_outputs/predictor_training_progress.png" alt="DOGE训练进度" width="600px" />
 </p>
 
-Additionally, we also provide a script that makes predictions without Volume and Amount data, which can be found in [`examples/prediction_wo_vol_example.py`](examples/prediction_wo_vol_example.py).
+> **注**: 图表文件位于 `finetune/doge_outputs/predictor_training_progress.png`
 
+### 关键优化点
 
-## 🔧 Finetuning on Your Own Data (A-Share Market Example)
+- 📉 **学习率调优**: Tokenizer=5e-6, Predictor=2e-6
+- 🔧 **梯度裁剪**: 阈值设为3.0防止梯度爆炸
+- 📊 **数据标准化**: 使用MAD方法处理异常值
+- ⏹️ **早停机制**: 在第4轮检测到过拟合并停止
 
-We provide a complete pipeline for finetuning Kronos on your own datasets. As an example, we demonstrate how to use [Qlib](https://github.com/microsoft/qlib) to prepare data from the Chinese A-share market and conduct a simple backtest.
+## ⚙️ 配置说明
 
-> **Disclaimer:** This pipeline is intended as a demonstration to illustrate the finetuning process. It is a simplified example and not a production-ready quantitative trading system. A robust quantitative strategy requires more sophisticated techniques, such as portfolio optimization and risk factor neutralization, to achieve stable alpha.
+主要参数配置 (`doge_config.py`)：
 
-The finetuning process is divided into four main steps:
+```python
+# 数据参数
+lookback_window = 400          # 历史窗口长度
+predict_window = 120           # 预测窗口长度  
+train_ratio = 0.7              # 训练集比例
 
-1.  **Configuration**: Set up paths and hyperparameters.
-2.  **Data Preparation**: Process and split your data using Qlib.
-3.  **Model Finetuning**: Finetune the Tokenizer and the Predictor models.
-4.  **Backtesting**: Evaluate the finetuned model's performance.
-
-### Prerequisites
-
-1.  First, ensure you have all dependencies from `requirements.txt` installed.
-2.  This pipeline relies on `qlib`. Please install it:
-    ```shell
-      pip install pyqlib
-    ```
-3.  You will need to prepare your Qlib data. Follow the [official Qlib guide](https://github.com/microsoft/qlib) to download and set up your data locally. The example scripts assume you are using daily frequency data.
-
-### Step 1: Configure Your Experiment
-
-All settings for data, training, and model paths are centralized in `finetune/config.py`. Before running any scripts, please **modify the following paths** according to your environment:
-
-*   `qlib_data_path`: Path to your local Qlib data directory.
-*   `dataset_path`: Directory where the processed train/validation/test pickle files will be saved.
-*   `save_path`: Base directory for saving model checkpoints.
-*   `backtest_result_path`: Directory for saving backtesting results.
-*   `pretrained_tokenizer_path` and `pretrained_predictor_path`: Paths to the pre-trained models you want to start from (can be local paths or Hugging Face model names).
-
-You can also adjust other parameters like `instrument`, `train_time_range`, `epochs`, and `batch_size` to fit your specific task. If you don't use [Comet.ml](https://www.comet.com/), set `use_comet = False`.
-
-### Step 2: Prepare the Dataset
-
-Run the data preprocessing script. This script will load raw market data from your Qlib directory, process it, split it into training, validation, and test sets, and save them as pickle files.
-
-```shell
-python finetune/qlib_data_preprocess.py
+# 训练参数
+tokenizer_epochs = 5           # Tokenizer训练轮次
+predictor_epochs = 15          # Predictor训练轮次
+batch_size = 8                 # 批次大小
+clip_grad_norm = 3.0           # 梯度裁剪阈值
 ```
 
-After running, you will find `train_data.pkl`, `val_data.pkl`, and `test_data.pkl` in the directory specified by `dataset_path` in your config.
+## 🔗 相关资源
 
-### Step 3: Run the Finetuning
+- 📚 **原始Kronos项目**: [shiyu-coder/Kronos](https://github.com/shiyu-coder/Kronos)
+- 🤗 **预训练模型**: [NeoQuasar/Kronos-base](https://huggingface.co/NeoQuasar/Kronos-base)
+- 📄 **论文**: [Kronos: A Foundation Model for the Language of Financial Markets](https://arxiv.org/abs/2508.02739)
+- 🎯 **BTC/USDT交易对在线演示**: [Kronos Demo](https://shiyu-coder.github.io/Kronos-demo/)
 
-The finetuning process consists of two stages: finetuning the tokenizer and then the predictor. Both training scripts are designed for multi-GPU training using `torchrun`.
+## 📝 引用
 
-#### 3.1 Finetune the Tokenizer
+如果本项目对您的研究有帮助，请引用原始Kronos论文：
 
-This step adjusts the tokenizer to the data distribution of your specific domain.
-
-```shell
-# Replace NUM_GPUS with the number of GPUs you want to use (e.g., 2)
-torchrun --standalone --nproc_per_node=NUM_GPUS finetune/train_tokenizer.py
-```
-
-The best tokenizer checkpoint will be saved to the path configured in `config.py` (derived from `save_path` and `tokenizer_save_folder_name`).
-
-#### 3.2 Finetune the Predictor
-
-This step finetunes the main Kronos model for the forecasting task.
-
-```shell
-# Replace NUM_GPUS with the number of GPUs you want to use (e.g., 2)
-torchrun --standalone --nproc_per_node=NUM_GPUS finetune/train_predictor.py
-```
-
-The best predictor checkpoint will be saved to the path configured in `config.py`.
-
-### Step 4: Evaluate with Backtesting
-
-Finally, run the backtesting script to evaluate your finetuned model. This script loads the models, performs inference on the test set, generates prediction signals (e.g., forecasted price change), and runs a simple top-K strategy backtest.
-
-```shell
-# Specify the GPU for inference
-python finetune/qlib_test.py --device cuda:0
-```
-
-The script will output a detailed performance analysis in your console and generate a plot showing the cumulative return curves of your strategy against the benchmark, similar to the one below:
-
-<p align="center">
-    <img src="figures/backtest_result_example.png" alt="Backtest Example" align="center" width="700px" />
-</p>
-
-### 💡 From Demo to Production: Important Considerations
-
-*   **Raw Signals vs. Pure Alpha**: The signals generated by the model in this demo are raw predictions. In a real-world quantitative workflow, these signals would typically be fed into a portfolio optimization model. This model would apply constraints to neutralize exposure to common risk factors (e.g., market beta, style factors like size and value), thereby isolating the **"pure alpha"** and improving the strategy's robustness.
-*   **Data Handling**: The provided `QlibDataset` is an example. For different data sources or formats, you will need to adapt the data loading and preprocessing logic.
-*   **Strategy and Backtesting Complexity**: The simple top-K strategy used here is a basic starting point. Production-level strategies often incorporate more complex logic for portfolio construction, dynamic position sizing, and risk management (e.g., stop-loss/take-profit rules). Furthermore, a high-fidelity backtest should meticulously model transaction costs, slippage, and market impact to provide a more accurate estimate of real-world performance.
-
-> **📝 AI-Generated Comments**: Please note that many of the code comments within the `finetune/` directory were generated by an AI assistant (Gemini 2.5 Pro) for explanatory purposes. While they aim to be helpful, they may contain inaccuracies. We recommend treating the code itself as the definitive source of logic.
-
-## 📖 Citation
-
-If you use Kronos in your research, we would appreciate a citation to our [paper](https://arxiv.org/abs/2508.02739):
-
-```
+```bibtex
 @misc{shi2025kronos,
       title={Kronos: A Foundation Model for the Language of Financial Markets}, 
       author={Yu Shi and Zongliang Fu and Shuo Chen and Bohan Zhao and Wei Xu and Changshui Zhang and Jian Li},
@@ -310,11 +221,12 @@ If you use Kronos in your research, we would appreciate a citation to our [paper
 }
 ```
 
-## 📜 License 
-This project is licensed under the [MIT License](./LICENSE).
+## 📜 许可证
 
+本项目遵循开源许可协议 (基于原始 Kronos 项目许可证)。
 
+---
 
-
-
-
+<div align="center">
+  <sub>Built with ❤️ based on Kronos Foundation Model</sub>
+</div>

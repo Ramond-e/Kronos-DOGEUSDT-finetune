@@ -49,15 +49,17 @@ Desktop.ini
 *.parquet
 *.h5
 *.hdf5
+*.pkl
 
-# Model files (large files)
+# Model files (large files) - All models stored in Hugging Face
 *.pth
-*.pt
 *.ckpt
 *.bin
+*.pt
 
-# Logs
+# Logs - Allow training logs
 *.log
+!finetune/doge_outputs/logs/
 logs/
 
 # Environment
