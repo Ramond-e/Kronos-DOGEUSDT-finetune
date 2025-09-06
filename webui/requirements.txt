@@ -1,0 +1,55 @@
+# Kronos DOGE/USDT WebUI 依赖包
+# 核心框架和基础库
+Flask==2.3.3
+pandas>=1.5.0
+numpy>=1.24.0
+
+# 机器学习和深度学习
+torch>=2.0.0
+transformers>=4.30.0
+
+# 加密货币数据
+python-binance>=1.0.17
+requests>=2.31.0
+
+# 数据处理和分析
+scikit-learn>=1.3.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Web开发相关
+Werkzeug>=2.3.0
+Jinja2>=3.1.0
+MarkupSafe>=2.1.0
+itsdangerous>=2.1.0
+click>=8.1.0
+
+# 日期时间处理
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# 数学和统计
+scipy>=1.11.0
+
+# HTTP客户端
+urllib3>=1.26.0
+certifi>=2023.7.22
+
+# 时区处理
+pytz>=2023.3
+
+# 可选：Jupyter支持（用于开发调试）
+# jupyter>=1.0.0
+# ipykernel>=6.25.0
+
+# 可选：GPU支持（如果有NVIDIA GPU）
+# torch[cu118] --extra-index-url https://download.pytorch.org/whl/cu118
+
+# 注意事项：
+# 1. 如果使用CUDA，请安装对应版本的PyTorch
+# 2. 对于Apple Silicon Mac，PyTorch会自动支持MPS
+# 3. CPU版本适用于所有平台
+# 4. 建议在虚拟环境中安装
+
+# 安装命令：
+# pip install -r requirements.txt

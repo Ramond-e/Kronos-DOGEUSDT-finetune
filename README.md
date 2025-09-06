@@ -1,5 +1,6 @@
 <div align="center">
-  <h2><b>Kronos DOGE/USDT Fine-tuning Project</b></h2>
+  <h1><b>🚀 Kronos DOGE/USDT 预测系统</b></h1>
+  <p>基于微调Kronos模型的专业级DOGE/USDT价格预测系统</p>
 </div>
 
 <div align="center">
@@ -10,164 +11,131 @@
 <a href="https://github.com/shiyu-coder/Kronos"> 
 <img src="https://img.shields.io/badge/📚-Original_Kronos-blue" alt="Original Kronos"> 
 </a> 
-<a href="https://github.com/shiyu-coder/Kronos/blob/main/LICENSE"> 
+<a href="https://github.com/Ramond-e/Kronos-DOGEUSDT-finetune?tab=MIT-1-ov-file"> 
 <img src="https://img.shields.io/badge/License-MIT-green" alt="License"> 
 </a>
 
 </div>
 
-<!-- Logo placeholder - add logo if available -->
-<!-- <p align="center">
-<img src="./figures/logo.png" width="100">
-</p> -->
+<p align="center">
+<img src="webui/image/chart.png" alt="Kronos DOGE预测界面" width="800px" />
+</p>
 
-> 基于 **Kronos 金融基础模型**的 DOGE/USDT 加密货币微调实现  
-> 包含完整的数据处理、两阶段训练和可视化分析工具
+> **完整的DOGE/USDT预测解决方案** - 包含Web界面、实时预测、模型微调和数据管理的一体化系统
 
-## 🎯 项目简介
+## ✨ 主要特色
 
-本项目是基于 [Kronos](https://github.com/shiyu-coder/Kronos) 金融基础模型的 **DOGE/USDT** 加密货币微调实现。Kronos 是首个专为金融蜡烛图(K线)数据设计的开源基础模型，训练于全球45+交易所数据。
+- 🌐 **专业Web界面** - 基于Flask的实时预测系统，支持交互式图表
+- 🔮 **高精度预测** - 微调Kronos模型，预测未来120小时价格趋势  
+- 📡 **实时数据** - 自动从Binance获取最新400小时K线数据
+- 📊 **可视化分析** - Plotly.js专业金融图表，支持K线和趋势分析
+- 🛡️ **质量控制** - Temperature、Top-p等参数精确控制预测质量
+- 🎯 **智能分析** - 5级趋势分类和波动性分析
 
-我们在此基础上开发了针对 DOGE/USDT 交易对的完整微调方案，包括：
-- 🔄 **完整数据流水线** - 从原始CSV到训练就绪的数据
-- 🧠 **两阶段微调** - 分别优化 Tokenizer 和 Predictor
-- 📊 **实时监控** - 训练过程可视化和损失追踪
-- 🛡️ **鲁棒性优化** - 异常值处理和梯度裁剪
+## 🚀 快速开始
 
-## 🚀 主要特性
-
-- ✅ **自定义数据处理** - 支持1小时K线数据，MAD标准化处理
-- ✅ **滑动窗口训练** - 400步历史 + 120步预测窗口
-- ✅ **智能模型管理** - 基于验证损失的最佳模型自动保存
-- ✅ **过拟合检测** - 训练过程中的早停机制
-- ✅ **训练可视化** - 损失曲线和训练进度图表
-- ✅ **中断恢复** - 支持训练中断后的手动恢复
-
-## 📁 项目结构
-
-```
-kronos/
-├── finetune/                   # DOGE微调核心目录
-│   ├── doge_config.py         # 配置参数
-│   ├── doge_preprocess.py     # 数据预处理
-│   ├── doge_dataset.py        # PyTorch数据集
-│   ├── doge_train.py          # 两阶段训练脚本
-│   ├── check_data_distribution.py     # 数据质量分析
-│   ├── visualize_training_progress.py # 可视化工具
-│   ├── prediction_eval/       # Kronos风格预测评估
-│   │   └── kronos_prediction_eval.py  # 预测评估脚本
-│   ├── DOGE_PROGRESS.md       # 项目进度记录
-│   ├── doge_data/             # 数据目录
-│   │   ├── raw/               # 原始DOGE数据
-│   │   ├── processed/         # 处理后数据
-│   │   └── splits/            # 训练/验证/测试集
-│   ├── doge_outputs/          # 训练输出
-│   │   ├── tokenizer/         # Tokenizer模型
-│   │   ├── predictor/         # Predictor模型
-│   │   └── logs/              # 训练日志
-│   └── utils/                 # 工具函数
-├── get_DOGEUSDT_data/         # 数据获取脚本
-│   ├── getData.py             # Binance数据获取
-│   └── dogeusdt_1h_all_klines.csv    # 历史数据
-├── model/                     # Kronos模型定义
-│   ├── kronos.py              # 主模型文件
-│   └── module.py              # 模型组件
-├── README.md                  # 项目说明
-└── requirements.txt           # 依赖列表
-```
-
-## 🛠️ 快速开始
-
-### 1. 环境安装
+### 1. 环境准备
 
 ```bash
-# 克隆仓库
-git clone https://github.com/Ramond-e/Kronos-DOGEUSDT-finetune
+# 克隆项目
+git clone https://github.com/Ramond-e/Kronos-DOGEUSDT-finetune.git
 cd kronos
 
 # 安装依赖
 pip install -r requirements.txt
 ```
 
-### 2. 获取DOGE/USDT数据
+### 2. 启动Web预测系统
 
+**Windows用户（推荐）**:
 ```bash
-# 使用Binance API获取数据
-cd get_DOGEUSDT_data
-python getData.py
+cd webui
+pip install -r requirements.txt
+start.bat
 ```
 
-### 3. 数据预处理
-
+**所有平台**:
 ```bash
-cd finetune
+cd webui  
+pip install -r requirements.txt
+python run.py
+```
+
+启动后访问：http://127.0.0.1:5000
+
+### 3. 使用Web界面
+
+1. **启动系统** → 自动检查环境和模型状态
+2. **开启实时数据** → 勾选"📡 自动获取最新数据"（推荐）
+3. **调整参数** → Temperature=1.0, top_p=0.9为推荐设置
+4. **开始预测** → 点击"🔮 开始预测"按钮
+5. **分析结果** → 查看K线图表、趋势分析和预测结果
+
+<p align="center">
+<img src="webui/image/sum.png" alt="预测结果展示" width="700px" />
+</p>
+
+## 📊 Web界面功能
+
+### 🎯 核心功能
+- **实时数据获取**: 每次预测前自动获取最新400小时DOGE/USDT数据
+- **智能预测**: 基于微调Kronos模型预测未来120小时价格走势
+- **参数控制**: Temperature、Top-p、Sample Count等专业级参数调节
+- **交互图表**: Plotly.js专业金融可视化，支持缩放和导出
+- **趋势分析**: 5级趋势分类（强烈上涨→强烈下跌）和波动性分析
+
+### 📈 预测结果
+- **当前价格 vs 预测价格**: 显示120小时后的预期价格变化
+- **价格变化**: 涨跌幅度和趋势方向分析
+- **预测区间**: 价格波动的预期范围
+- **质量指标**: 预测质量评分和置信度
+- **K线图表**: 历史数据+预测数据的完整展示
+
+## 🤖 模型微调训练
+
+### 📦 预训练模型
+
+我们的微调模型已部署到Hugging Face Hub，Web系统会自动加载：
+
+- **🤗 DOGE Tokenizer**: [Ramond-e/doge-kronos-tokenizer](https://huggingface.co/Ramond-e/doge-kronos-tokenizer)
+- **🤗 DOGE Predictor**: [Ramond-e/doge-kronos-predictor](https://huggingface.co/Ramond-e/doge-kronos-predictor)
+
+### 🛠️ 自定义微调（高级用户）
+
+如果您想训练自己的模型：
+
+#### 1. 数据准备
+```bash
+# 获取DOGE/USDT历史数据
+cd get_DOGEUSDT_data
+python getData.py
+
+# 数据预处理
+cd ../finetune
 python doge_preprocess.py
 ```
 
-数据处理包括：
-- 时间特征生成 (小时、星期、月份等)
-- 滑动窗口创建 (400历史 + 120预测)
-- 鲁棒标准化 (中位数/MAD方法)
-- 数据集分割 (70%/15%/15%)
-
-### 4. 开始训练
-
+#### 2. 模型训练
 ```bash
 # 启动两阶段微调
 python doge_train.py
 ```
 
-训练流程：
-1. **阶段1**: Tokenizer微调 (5轮)
-2. **阶段2**: Predictor微调 (15轮)
-3. **自动保存**: 基于验证损失的最佳模型
+训练包含两个阶段：
+- **阶段1**: Tokenizer微调（5轮，~30分钟/轮）
+- **阶段2**: Predictor微调（15轮，~5小时/轮）
 
-### 5. 训练监控
-
+#### 3. 训练监控
 ```bash
 # 生成训练进度可视化
 python visualize_training_progress.py
 
-# 运行Kronos风格预测评估
+# 模型预测评估
 cd prediction_eval
 python kronos_prediction_eval.py
 ```
 
-## 📥 预训练模型下载
-
-由于模型文件较大（~109MB），我们将其托管在 Hugging Face Hub 上：
-
-### 🤗 方式1: 直接加载使用 (推荐)
-
-```python
-from model import KronosTokenizer, Kronos
-
-# 直接从 Hugging Face 加载微调后的模型
-tokenizer = KronosTokenizer.from_pretrained("Ramond-e/doge-kronos-tokenizer")
-model = Kronos.from_pretrained("Ramond-e/doge-kronos-predictor")
-
-# 使用微调后的模型进行预测
-from model import KronosPredictor
-predictor = KronosPredictor(model, tokenizer, device="cuda:0")
-```
-
-### 📄 方式2: 手动下载
-
-- **DOGE Tokenizer (15MB)**: [Ramond-e/doge-kronos-tokenizer](https://huggingface.co/Ramond-e/doge-kronos-tokenizer)
-- **DOGE Predictor (94MB)**: [Ramond-e/doge-kronos-predictor](https://huggingface.co/Ramond-e/doge-kronos-predictor)
-
-下载后放置在以下位置：
-```
-finetune/doge_outputs/
-├── tokenizer/
-│   └── best_tokenizer_epoch_5.pt
-└── predictor/
-    └── best_predictor_epoch_4.pt
-```
-
-## 📊 训练成果
-
-我们的DOGE/USDT微调取得了以下成果：
+### 📊 训练成果
 
 | 模型 | 最佳轮次 | 验证损失 | 训练时间 |
 |------|----------|----------|----------|
@@ -178,37 +146,24 @@ finetune/doge_outputs/
     <img src="finetune/doge_outputs/predictor_training_progress.png" alt="DOGE训练进度" width="600px" />
 </p>
 
-> **注**: 图表文件位于 `finetune/doge_outputs/predictor_training_progress.png`
+> **训练进度图**: 显示Predictor模型的训练和验证损失变化，可以看出在第4轮达到最佳性能
 
-## 🎯 模型预测评估
+#### 🔍 预测性能评估
 
-### 📈 Kronos风格预测验证
-
-基于原Kronos项目的预测方式，我们对微调后的模型进行了全面评估：
-
-- **评估方式**: 600小时数据，前80% (480小时) 作为历史，预测后20% (120小时)
-- **模型来源**: 直接从Hugging Face加载微调后的模型
-- **评估脚本**: `finetune/prediction_eval/kronos_prediction_eval.py`
-
-### 🔍 关键发现：市场时期敏感性
-
-通过对不同月份的评估，我们发现了一个重要现象：**微调模型对不同市场时期的表现存在显著差异**
+通过多时间段评估发现：**模型对不同市场时期表现存在显著差异**
 
 | 时间段 | 数据期间 | Close相关系数 | 方向准确率 | MAPE | 评价 |
 |--------|----------|---------------|------------|------|------|
-| **5月期间** | 2025-05-01 到 05-26 | **0.7683** ⭐ | 48.74% | 10.75% | 🏆 模型表现良好 |
-| **4月期间** | 2025-03-20 到 04-14 | 0.4916 | 49.58% | **4.98%** ⭐ | ✅ 模型表现良好 |
-| **6月期间** | 2025-06-03 到 06-28 | -0.4475 | 52.10% | 6.39% | ⚠️ 有待改进 |
-| **7月期间** | 2025-07-03 到 07-28 | 0.0956 | 48.74% | 13.74% | ⚠️ 有待改进 |
-| **最新期间** | 2025-08-09 到 09-03 | -0.3085 | 42.86% | 8.29% | ⚠️ 有待改进 |
+| **5月期间** | 2025-05-01 到 05-26 | **0.7683** ⭐ | 48.74% | 10.75% | 🏆 模型表现优秀 |
+| **4月期间** | 2025-03-20 到 04-14 | 0.4916 | 49.58% | **4.98%** ⭐ | ✅ 数值误差最低 |
+| **6月期间** | 2025-06-03 到 06-28 | -0.4475 | 52.10% | 6.39% | ⚠️ 需要改进 |
 
-**核心洞察**：
-- 🎯 **最佳表现**：5月期间相关系数达到0.7683，展现优秀的趋势预测能力
-- 📉 **时间敏感性**：越接近当前时间，模型表现越差，反映了市场环境的变化
-- 🔄 **数值vs趋势**：4月期间数值误差最低，但5月期间趋势预测最佳
-- 💡 **实用意义**：说明金融模型需要持续更新以适应市场变化
+**关键发现**：
+- 🎯 **最佳表现**：5月期间相关系数0.7683，展现优秀趋势预测
+- 📉 **时间敏感性**：越接近当前时间表现越差，反映市场变化
+- 💡 **实际意义**：金融模型需要持续更新适应市场环境
 
-### 📊 预测结果可视化
+### 📈 预测结果可视化
 
 以下是5月的预测结果图：
 
@@ -216,62 +171,83 @@ finetune/doge_outputs/
     <img src="finetune/prediction_eval/doge_prediction_results.png" alt="DOGE预测结果对比" width="800px" />
 </p>
 
-> **图表说明**: 蓝色实线为真实价格和交易量，红色虚线为模型预测。黑色竖直虚线标示预测开始位置。上图显示Close价格预测，下图显示Volume交易量预测。可以看出模型在价格趋势预测方面表现较为优异（相关系数0.7683）。
+> **预测对比图**: 蓝色实线为真实价格和交易量，红色虚线为模型预测。黑色竖直虚线标示预测开始位置。上图显示Close价格预测，下图显示Volume交易量预测。可以看出模型在价格趋势预测方面表现较为优异（相关系数0.7683）。
 
-### 🔧 关键优化点
+## 📁 项目结构
 
-- 📉 **学习率调优**: Tokenizer=5e-6, Predictor=2e-6
-- 🔧 **梯度裁剪**: 阈值设为3.0防止梯度爆炸
-- 📊 **数据标准化**: 使用MAD方法处理异常值
-- ⏹️ **早停机制**: 在第4轮检测到过拟合并停止
-- 🎯 **评估优化**: 多时间段测试发现最佳表现期
-
-## ⚙️ 配置说明
-
-主要参数配置 (`doge_config.py`)：
-
-```python
-# 数据参数
-lookback_window = 400          # 历史窗口长度
-predict_window = 120           # 预测窗口长度  
-train_ratio = 0.7              # 训练集比例
-
-# 训练参数
-tokenizer_epochs = 5           # Tokenizer训练轮次
-predictor_epochs = 15          # Predictor训练轮次
-batch_size = 8                 # 批次大小
-clip_grad_norm = 3.0           # 梯度裁剪阈值
 ```
+kronos/
+├── webui/                      # 🌐 Web预测系统
+│   ├── app.py                 # Flask后端主应用
+│   ├── model_service.py       # 模型预测服务
+│   ├── data_fetcher.py        # 实时数据获取
+│   ├── templates/index.html   # 前端界面
+│   ├── start.bat              # Windows启动脚本
+│   ├── run.py                 # 跨平台启动脚本
+│   ├── data/                  # 数据文件目录
+│   └── README.md              # Web系统说明
+├── finetune/                   # 🤖 模型微调训练
+│   ├── doge_train.py          # 两阶段训练脚本
+│   ├── doge_config.py         # 训练配置参数
+│   ├── doge_dataset.py        # 数据集处理
+│   ├── prediction_eval/       # 预测评估工具
+│   └── DOGE_PROGRESS.md       # 训练进度记录
+├── model/                      # 🧠 Kronos模型定义
+│   ├── kronos.py              # 核心模型文件
+│   └── module.py              # 模型组件
+├── get_DOGEUSDT_data/         # 📊 数据获取工具
+└── requirements.txt           # 依赖配置
+```
+
+## ❓ 常见问题
+
+**Q: 首次使用预测很慢？**  
+A: 首次需要下载Hugging Face模型（~100MB），请耐心等待。后续使用很快。
+
+**Q: 如何获得最佳预测效果？**  
+A: 建议开启"自动获取最新数据"，使用默认参数（Temperature=1.0, top_p=0.9）。
+
+**Q: 模型加载失败怎么办？**  
+A: 检查网络连接，确保能访问Hugging Face。如在中国大陆可能需要VPN。
+
+**Q: 如何提升预测速度？**  
+A: 安装CUDA版本PyTorch可显著提升性能：
+```bash
+pip install torch --extra-index-url https://download.pytorch.org/whl/cu118
+```
+
+**Q: 预测结果准确性如何？**  
+A: 模型在不同市场期间表现不同，5月期间相关系数达0.7683。金融预测存在不确定性，仅供参考。
+
+## 🔗 技术架构
+
+- **前端**: HTML + CSS + JavaScript + Plotly.js
+- **后端**: Flask + Python
+- **模型**: 微调Kronos Transformer模型
+- **数据**: Binance API实时K线数据
+- **部署**: 本地运行，支持Windows/Linux/macOS
+
+## ⚠️ 重要声明
+
+**本系统仅供学习和研究使用，预测结果不构成投资建议。**
+
+- 加密货币投资存在重大风险，价格波动巨大
+- 任何预测模型都可能出现偏差，请谨慎决策
+- 投资有风险，入市需谨慎，请根据自身风险承受能力操作
 
 ## 🔗 相关资源
 
 - 📚 **原始Kronos项目**: [shiyu-coder/Kronos](https://github.com/shiyu-coder/Kronos)
-- 🤗 **预训练模型**: [NeoQuasar/Kronos-base](https://huggingface.co/NeoQuasar/Kronos-base)
-- 📄 **论文**: [Kronos: A Foundation Model for the Language of Financial Markets](https://arxiv.org/abs/2508.02739)
-- 🎯 **BTC/USDT交易对在线演示**: [Kronos Demo](https://shiyu-coder.github.io/Kronos-demo/)
-
-## 📝 引用
-
-如果本项目对您的研究有帮助，请引用原始Kronos论文：
-
-```bibtex
-@misc{shi2025kronos,
-      title={Kronos: A Foundation Model for the Language of Financial Markets}, 
-      author={Yu Shi and Zongliang Fu and Shuo Chen and Bohan Zhao and Wei Xu and Changshui Zhang and Jian Li},
-      year={2025},
-      eprint={2508.02739},
-      archivePrefix={arXiv},
-      primaryClass={q-fin.ST},
-      url={https://arxiv.org/abs/2508.02739}, 
-}
-```
+- 🤗 **Kronos基础模型**: [NeoQuasar/Kronos-base](https://huggingface.co/NeoQuasar/Kronos-base)  
+- 📄 **Kronos论文**: [Kronos: A Foundation Model for Financial Markets](https://arxiv.org/abs/2508.02739)
+- 🎯 **BTC/USDT在线演示**: [Kronos Demo](https://shiyu-coder.github.io/Kronos-demo/)
 
 ## 📜 许可证
 
-本项目遵循开源许可协议 (基于原始 Kronos 项目许可证)。
+本项目基于MIT许可证开源，详见[LICENSE](LICENSE)文件。
 
 ---
 
 <div align="center">
-  <sub>Built with ❤️ based on Kronos Foundation Model</sub>
+  <sub>🚀 开始您的DOGE价格预测之旅吧！Built with ❤️ based on Kronos Foundation Model</sub>
 </div>

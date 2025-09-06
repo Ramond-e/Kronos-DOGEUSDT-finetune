@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kronos DOGE/USDT WebUI</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .control-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            height: fit-content;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .panel-title {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-item {
+            margin: 12px 0;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .status-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .status-ok { 
+            border-left-color: #48bb78; 
+            background: linear-gradient(90deg, #f0fff4 0%, #f7fafc 100%);
+        }
+        .status-warning { 
+            border-left-color: #ed8936; 
+            background: linear-gradient(90deg, #fffaf0 0%, #f7fafc 100%);
+        }
+        .status-error { 
+            border-left-color: #f56565; 
+            background: linear-gradient(90deg, #fff5f5 0%, #f7fafc 100%);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .parameter-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .parameter-control input[type="range"] {
+            flex: 1;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .parameter-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+            border: none;
+        }
+
+        .parameter-control input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+            border: none;
+        }
+
+        .parameter-control input[type="range"]::-moz-range-track {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            border: none;
+        }
+
+        .parameter-value {
+            min-width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+            background: #edf2f7;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .form-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: #f7fafc;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .result-content {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .trend-analysis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .trend-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trend-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .trend-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .trend-label {
+            font-size: 0.85rem;
+            color: #718096;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .trend-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .trend-subtext {
+            font-size: 0.75rem;
+            color: #a0aec0;
+        }
+
+        .section-divider {
+            margin: 25px 0;
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%);
+        }
+
+        .parameter-summary {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-top: 15px;
+        }
+
+        .parameter-summary h4 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .parameter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .parameter-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .parameter-item:last-child {
+            border-bottom: none;
+        }
+
+        .parameter-label {
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .parameter-value-display {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .trend-analysis {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Kronos DOGE/USDT 预测系统</h1>
+            <p>基于微调Kronos模型的DOGE/USDT价格趋势预测 • 固定400+120时间窗口 • 专业级预测质量控制</p>
+        </div>
+
+        <!-- 系统状态面板 -->
+        <div class="status-panel">
+            <h2 class="panel-title">📊 系统状态</h2>
+            <div id="status-content">
+                <div class="status-item status-warning pulse">
+                    <strong>正在检查系统状态...</strong>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="checkStatus()">🔄 刷新状态</button>
+        </div>
+
+        <div class="main-content">
+            <!-- 控制面板 -->
+            <div class="control-panel">
+                <h2 class="panel-title">🎯 预测控制面板</h2>
+                
+                <div class="form-group">
+                    <label for="temperature">🌡️ Temperature (预测随机性)</label>
+                    <div class="parameter-control">
+                        <input type="range" id="temperature" min="0.1" max="2.0" step="0.1" value="1.0">
+                        <span class="parameter-value" id="temperature-value">1.0</span>
+                    </div>
+                    <small class="form-text">控制预测的随机性，较高值产生更多样化的预测，较低值产生更保守的预测</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="top-p">🎯 Nucleus Sampling (top_p)</label>
+                    <div class="parameter-control">
+                        <input type="range" id="top-p" min="0.1" max="1.0" step="0.1" value="0.9">
+                        <span class="parameter-value" id="top-p-value">0.9</span>
+                    </div>
+                    <small class="form-text">控制预测多样性，较高值考虑更广泛的概率分布</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="sample-count">🔢 Sample Count (采样次数)</label>
+                    <input type="number" id="sample-count" min="1" max="5" value="1">
+                    <small class="form-text">生成多个预测样本以提高质量（推荐1-3次）</small>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="auto-fetch" checked style="width: auto; margin: 0;">
+                        <span>📡 自动获取最新数据</span>
+                    </label>
+                    <small class="form-text">每次预测前自动从Binance获取最新400小时数据（推荐开启）</small>
+                </div>
+
+                <hr class="section-divider">
+
+                <div class="form-group">
+                    <label>📏 预测窗口配置</label>
+                    <div class="parameter-summary">
+                        <div class="parameter-grid">
+                            <div class="parameter-item">
+                                <span class="parameter-label">历史数据:</span>
+                                <span class="parameter-value-display">400小时</span>
+                            </div>
+                            <div class="parameter-item">
+                                <span class="parameter-label">预测长度:</span>
+                                <span class="parameter-value-display">120小时</span>
+                            </div>
+                            <div class="parameter-item">
+                                <span class="parameter-label">数据频率:</span>
+                                <span class="parameter-value-display">1小时</span>
+                            </div>
+                            <div class="parameter-item">
+                                <span class="parameter-label">总窗口:</span>
+                                <span class="parameter-value-display">520点 (固定)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-success" id="predict-btn" onclick="startPrediction()" disabled>
+                    🔮 开始预测
+                </button>
+
+                <div id="loading">
+                    <div class="spinner"></div>
+                    <p class="loading-text">正在进行预测，请稍候...</p>
+                </div>
+            </div>
+
+            <!-- 图表和结果面板 -->
+            <div class="chart-container">
+                <h2 class="panel-title">📈 预测结果图表</h2>
+                <div id="chart-placeholder" style="text-align: center; padding: 60px; color: #718096;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">📊</div>
+                    <h3 style="color: #4a5568; margin-bottom: 10px;">等待预测开始</h3>
+                    <p>请点击"开始预测"按钮来生成DOGE/USDT价格趋势预测图表</p>
+                </div>
+                <div id="chart" style="display: none;"></div>
+                
+                <!-- 预测结果详情 -->
+                <div id="result-panel" style="display: none;">
+                    <hr class="section-divider">
+                    <div id="result-content" class="result-content fade-in">
+                        <!-- 预测结果将显示在这里 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载时检查状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkStatus();
+            
+            // 设置参数实时更新
+            document.getElementById('temperature').addEventListener('input', function() {
+                document.getElementById('temperature-value').textContent = this.value;
+            });
+            
+            document.getElementById('top-p').addEventListener('input', function() {
+                document.getElementById('top-p-value').textContent = this.value;
+            });
+        });
+
+        // 检查系统状态
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayStatus(result);
+                } else {
+                    document.getElementById('status-content').innerHTML = 
+                        '<div class="status-item status-error"><strong>状态检查失败:</strong> ' + result.error + '</div>';
+                }
+            } catch (error) {
+                document.getElementById('status-content').innerHTML = 
+                    '<div class="status-item status-error"><strong>网络错误:</strong> ' + error.message + '</div>';
+            }
+        }
+
+        // 显示系统状态
+        function displayStatus(result) {
+            let statusHtml = '';
+            
+            // 数据状态
+            if (result.data.available) {
+                const fileSize = result.data.file_size_kb ? ` (${result.data.file_size_kb}KB)` : '';
+                statusHtml += `<div class="status-item status-ok">
+                    <strong>✅ 数据文件:</strong> ${result.data.file_path ? result.data.file_path.split('/').pop() : 'N/A'}${fileSize}<br>
+                    <strong>数据条数:</strong> ${result.data.rows || 'N/A'}<br>
+                    <strong>时间范围:</strong> ${result.data.time_range ? result.data.time_range.start + ' 到 ' + result.data.time_range.end : 'N/A'}
+                </div>`;
+            } else {
+                statusHtml += '<div class="status-item status-error"><strong>❌ 数据文件:</strong> 未找到，请先运行 data_fetcher.py</div>';
+            }
+            
+            // 模型状态  
+            if (result.model.available) {
+                if (result.model.loaded) {
+                    const device = result.model.device || 'unknown';
+                    statusHtml += `<div class="status-item status-ok"><strong>✅ Kronos模型:</strong> 已加载 (${device})</div>`;
+                } else {
+                    statusHtml += '<div class="status-item status-warning"><strong>⚠️ Kronos模型:</strong> 可用但未加载，首次预测时将自动加载</div>';
+                }
+            } else {
+                statusHtml += '<div class="status-item status-error"><strong>❌ Kronos模型:</strong> 不可用，请检查model模块</div>';
+            }
+            
+            document.getElementById('status-content').innerHTML = statusHtml;
+            
+            // 更新预测按钮状态
+            const predictBtn = document.getElementById('predict-btn');
+            if (result.data.available && result.model.available) {
+                predictBtn.disabled = false;
+            } else {
+                predictBtn.disabled = true;
+            }
+        }
+
+        // 开始预测
+        async function startPrediction() {
+            const predictBtn = document.getElementById('predict-btn');
+            const loading = document.getElementById('loading');
+            const resultPanel = document.getElementById('result-panel');
+            
+            // 获取参数
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            const topP = parseFloat(document.getElementById('top-p').value);
+            const sampleCount = parseInt(document.getElementById('sample-count').value);
+            const autoFetch = document.getElementById('auto-fetch').checked;
+            
+            try {
+                // 显示加载状态
+                predictBtn.disabled = true;
+                loading.style.display = 'block';
+                resultPanel.style.display = 'none';
+                
+                // 更新加载提示
+                const loadingText = document.querySelector('#loading .loading-text');
+                if (autoFetch) {
+                    loadingText.textContent = '正在获取最新数据并进行预测，请稍候...';
+                } else {
+                    loadingText.textContent = '正在进行预测，请稍候...';
+                }
+                
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        temperature: temperature,
+                        top_p: topP,
+                        sample_count: sampleCount,
+                        auto_fetch: autoFetch
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // 调试：打印完整的返回数据结构
+                console.log('🔍 预测API返回数据:', result);
+                
+                if (result.success) {
+                    displayPredictionResult(result);
+                } else {
+                    alert('预测失败: ' + result.error);
+                }
+                
+            } catch (error) {
+                alert('预测过程中发生错误: ' + error.message);
+            } finally {
+                predictBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+
+        // 显示预测结果
+        function displayPredictionResult(result) {
+            const chartPlaceholder = document.getElementById('chart-placeholder');
+            const chart = document.getElementById('chart');
+            const resultPanel = document.getElementById('result-panel');
+            const resultContent = document.getElementById('result-content');
+            
+            // 数据验证
+            if (!result || !result.data) {
+                console.error('预测结果数据无效:', result);
+                alert('预测结果数据格式错误，请重试');
+                return;
+            }
+            
+            // 隐藏占位符，显示图表区域
+            chartPlaceholder.style.display = 'none';
+            chart.style.display = 'block';
+            resultPanel.style.display = 'block';
+            
+            // 生成Plotly图表
+            if (result.data.chart_data) {
+                generateChart(result.data.chart_data);
+            }
+            
+            const data = result.data;
+            const trend = data.trend_analysis || {};
+            
+            let html = `
+                <h3 style="color: #4a5568; margin-bottom: 15px;">🔮 预测结果摘要</h3>
+                <p style="margin-bottom: 20px; color: #718096;"><strong>消息:</strong> ${result.message}</p>
+                
+                <div class="trend-analysis">
+                    <div class="trend-item">
+                        <div class="trend-label">当前价格</div>
+                        <div class="trend-value">$${trend.current_price ? trend.current_price.toFixed(6) : 'N/A'}</div>
+                        <div class="trend-subtext">最新数据</div>
+                    </div>
+                    <div class="trend-item">
+                        <div class="trend-label">预测价格</div>
+                        <div class="trend-value">$${trend.predicted_price ? trend.predicted_price.toFixed(6) : 'N/A'}</div>
+                        <div class="trend-subtext">120小时后</div>
+                    </div>
+                    <div class="trend-item">
+                        <div class="trend-label">价格变化</div>
+                        <div class="trend-value" style="color: ${trend.trend_color || '#333'}">
+                            ${trend.price_change_pct ? trend.price_change_pct.toFixed(2) : 'N/A'}%
+                        </div>
+                        <div class="trend-subtext">${trend.price_change !== undefined && trend.price_change >= 0 ? '↗' : '↘'} ${trend.price_change !== undefined ? Math.abs(trend.price_change).toFixed(6) : 'N/A'} USDT</div>
+                    </div>
+                    <div class="trend-item">
+                        <div class="trend-label">趋势方向</div>
+                        <div class="trend-value" style="color: ${trend.trend_color || '#333'}">
+                            ${trend.trend_emoji || ''} ${trend.trend || 'N/A'}
+                        </div>
+                        <div class="trend-subtext">预期走势</div>
+                    </div>
+                    <div class="trend-item">
+                        <div class="trend-label">预测区间</div>
+                        <div class="trend-value" style="font-size: 1.1rem; line-height: 1.2;">
+                            $${trend.predicted_range && trend.predicted_range.min ? trend.predicted_range.min.toFixed(6) : 'N/A'}
+                            <br>
+                            <span style="font-size: 1.1rem;">至 $${trend.predicted_range && trend.predicted_range.max ? trend.predicted_range.max.toFixed(6) : 'N/A'}</span>
+                        </div>
+                        <div class="trend-subtext">价格区间</div>
+                    </div>
+                    <div class="trend-item">
+                        <div class="trend-label">波动性分析</div>
+                        <div class="trend-value">${trend.historical_volatility ? trend.historical_volatility.toFixed(2) : 'N/A'}%</div>
+                        <div class="trend-subtext">历史波动率</div>
+                    </div>
+                </div>
+                
+                <!-- 波动性和质量分析 -->
+                <div class="trend-analysis" style="margin-top: 20px;">
+                    <div class="trend-item">
+                        <div class="trend-label">预测波动率</div>
+                        <div class="trend-value">${data.volatility_analysis ? data.volatility_analysis.predicted_volatility.toFixed(2) : 'N/A'}%</div>
+                        <div class="trend-subtext">${data.volatility_analysis ? data.volatility_analysis.volatility_level : 'N/A'}</div>
+                    </div>
+                    <div class="trend-item">
+                        <div class="trend-label">预测质量</div>
+                        <div class="trend-value">${data.quality_metrics ? data.quality_metrics.overall_quality_score.toFixed(1) : 'N/A'}</div>
+                        <div class="trend-subtext">${data.quality_metrics ? data.quality_metrics.confidence_level : 'N/A'}置信度</div>
+                    </div>
+                    <div class="trend-item">
+                        <div class="trend-label">预测稳定性</div>
+                        <div class="trend-value">${data.quality_metrics ? data.quality_metrics.prediction_stability.toFixed(1) : 'N/A'}</div>
+                        <div class="trend-subtext">稳定性评分</div>
+                    </div>
+                </div>
+                
+                <div class="parameter-summary" style="margin-top: 25px;">
+                    <h4>📊 本次预测配置</h4>
+                    <div class="parameter-grid">
+                        <div class="parameter-item">
+                            <span class="parameter-label">Temperature:</span>
+                            <span class="parameter-value-display">${data.parameters.temperature}</span>
+                        </div>
+                        <div class="parameter-item">
+                            <span class="parameter-label">Top-p:</span>
+                            <span class="parameter-value-display">${data.parameters.top_p}</span>
+                        </div>
+                        <div class="parameter-item">
+                            <span class="parameter-label">样本数:</span>
+                            <span class="parameter-value-display">${data.parameters.sample_count}</span>
+                        </div>
+                        <div class="parameter-item">
+                            <span class="parameter-label">历史数据:</span>
+                            <span class="parameter-value-display">${data.parameters && data.parameters.historical_hours ? data.parameters.historical_hours : 400}小时</span>
+                        </div>
+                        <div class="parameter-item">
+                            <span class="parameter-label">预测长度:</span>
+                            <span class="parameter-value-display">${data.parameters && data.parameters.pred_hours ? data.parameters.pred_hours : 120}小时</span>
+                        </div>
+                        <div class="parameter-item">
+                            <span class="parameter-label">计算设备:</span>
+                            <span class="parameter-value-display">${data.model_info ? data.model_info.device.toUpperCase() : 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            resultContent.innerHTML = html;
+            
+            // 添加淡入动画
+            resultContent.classList.add('fade-in');
+        }
+
+        // 生成Plotly图表
+        function generateChart(chartData) {
+            const historical = chartData.historical;
+            const prediction = chartData.prediction;
+            
+            // 历史K线数据
+            const historicalTrace = {
+                x: historical.timestamps,
+                close: historical.close,
+                decreasing: {line: {color: '#f56565'}},
+                high: historical.high,
+                increasing: {line: {color: '#48bb78'}},
+                line: {color: 'rgba(31,119,180,1)'},
+                low: historical.low,
+                open: historical.open,
+                type: 'candlestick',
+                name: '历史数据',
+                xaxis: 'x',
+                yaxis: 'y'
+            };
+            
+            // 预测K线数据
+            const predictionTrace = {
+                x: prediction.timestamps,
+                close: prediction.close,
+                decreasing: {line: {color: '#fc8181'}},
+                high: prediction.high,
+                increasing: {line: {color: '#68d391'}},
+                line: {color: 'rgba(255,127,14,1)'},
+                low: prediction.low,
+                open: prediction.open,
+                type: 'candlestick',
+                name: '预测数据',
+                xaxis: 'x',
+                yaxis: 'y',
+                opacity: 0.8
+            };
+            
+            // 计算价格范围以优化Y轴显示
+            const allPrices = [...historical.close, ...prediction.close];
+            const minPrice = Math.min(...allPrices);
+            const maxPrice = Math.max(...allPrices);
+            const priceMargin = (maxPrice - minPrice) * 0.1;
+            
+            const layout = {
+                title: {
+                    text: `🚀 DOGE/USDT 价格趋势预测 (${historical.timestamps.length}h历史 + ${prediction.timestamps.length}h预测)`,
+                    font: {size: 18, color: '#4a5568', family: 'Segoe UI, Arial'},
+                    x: 0.5
+                },
+                xaxis: {
+                    title: {
+                        text: '⏰ 时间',
+                        font: {size: 14, color: '#4a5568'}
+                    },
+                    rangeslider: {visible: false},
+                    type: 'date',
+                    gridcolor: '#e2e8f0',
+                    linecolor: '#cbd5e0',
+                    showgrid: true,
+                    zeroline: false
+                },
+                yaxis: {
+                    title: {
+                        text: '💰 价格 (USDT)',
+                        font: {size: 14, color: '#4a5568'}
+                    },
+                    gridcolor: '#e2e8f0',
+                    linecolor: '#cbd5e0',
+                    tickformat: '.6f',
+                    showgrid: true,
+                    zeroline: false,
+                    range: [minPrice - priceMargin, maxPrice + priceMargin]
+                },
+                plot_bgcolor: '#fafafa',
+                paper_bgcolor: 'white',
+                font: {color: '#4a5568', family: 'Segoe UI, Arial'},
+                legend: {
+                    orientation: 'h',
+                    y: -0.12,
+                    x: 0.5,
+                    xanchor: 'center',
+                    bgcolor: 'rgba(255,255,255,0.8)',
+                    bordercolor: '#e2e8f0',
+                    borderwidth: 1
+                },
+                margin: {t: 80, b: 100, l: 100, r: 50},
+                height: 550,
+                hovermode: 'x unified',
+                shapes: [{
+                    type: 'line',
+                    x0: historical.timestamps[historical.timestamps.length - 1],
+                    x1: historical.timestamps[historical.timestamps.length - 1],
+                    y0: minPrice - priceMargin,
+                    y1: maxPrice + priceMargin,
+                    line: {
+                        color: '#667eea',
+                        width: 3,
+                        dash: 'dash'
+                    }
+                }],
+                annotations: [{
+                    x: historical.timestamps[historical.timestamps.length - 1],
+                    y: maxPrice + priceMargin * 0.8,
+                    text: '🔮 预测起点',
+                    showarrow: true,
+                    arrowhead: 2,
+                    arrowsize: 1,
+                    arrowwidth: 2,
+                    arrowcolor: '#667eea',
+                    font: {color: '#667eea', size: 12, family: 'Segoe UI, Arial'},
+                    bgcolor: 'rgba(102, 126, 234, 0.1)',
+                    bordercolor: '#667eea',
+                    borderwidth: 1,
+                    borderpad: 4
+                }]
+            };
+            
+            const config = {
+                displayModeBar: true,
+                modeBarButtonsToRemove: ['lasso2d', 'select2d', 'autoScale2d'],
+                displaylogo: false,
+                responsive: true,
+                toImageButtonOptions: {
+                    format: 'png',
+                    filename: `DOGE_prediction_${new Date().toISOString().slice(0,10)}`,
+                    height: 600,
+                    width: 1200,
+                    scale: 2
+                },
+                locale: 'zh'
+            };
+            
+            Plotly.newPlot('chart', [historicalTrace, predictionTrace], layout, config);
+        }
+    </script>
+</body>
+</html>

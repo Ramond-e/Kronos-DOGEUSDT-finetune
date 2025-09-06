@@ -46,6 +46,7 @@ Desktop.ini
 # Data files (large files)
 *.feather
 *.csv
+!webui/data/*.csv  # Allow CSV files in webui/data/ directory
 *.parquet
 *.h5
 *.hdf5
